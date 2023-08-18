@@ -11,11 +11,6 @@ abstract class ApiService {
   static const sendNotification = "/send";
 
 
-  static const SUCCESS = 200;
-
-
-
-
   static Future<dynamic> callPostApi(
       String endPoint,
       Map<String, dynamic> params,
@@ -30,7 +25,7 @@ abstract class ApiService {
 
     print("ApiService Post Response Code : ${response.body.toString()}");
     print("ApiService Post Response : ${response.statusCode}");
-    if (response.statusCode == SUCCESS) {
+    if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
       if (onError != null) {

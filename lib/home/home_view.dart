@@ -27,6 +27,7 @@ class HomeView extends GetView<HomeController> {
                           TextField(
                             maxLines: 2,
                             controller: controller.serverKeyController.value,
+                            // controller: controller.serverKeyController.value,
                             decoration: const InputDecoration(
                               border: OutlineInputBorder(),
                               hintText: 'Server Key',
@@ -60,6 +61,16 @@ class HomeView extends GetView<HomeController> {
                             decoration: const InputDecoration(
                               border: OutlineInputBorder(),
                               hintText: 'Body',
+                            ),
+                          ),
+                          const SizedBox(height: heightSize),
+                          Text('Data - (optional)', style: AppText.textBold.copyWith(fontSize: titleFontSize)),
+                          const SizedBox(height: 10),
+                          TextField(
+                            controller: controller.dataController.value,
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              hintText: 'Must be JSON Object like {"key":"value"}',
                             ),
                           ),
                           const SizedBox(height: 50),
@@ -101,72 +112,82 @@ class HomeView extends GetView<HomeController> {
                   ),
                 ],
               )
-            :Padding(
-              padding: const EdgeInsets.only(left: 50,right: 50),
-              child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-              Text('Server Key*', style: AppText.textBold.copyWith(fontSize: titleFontSize)),
-              const SizedBox(height: 10),
-              TextField(
-                maxLines: 2,
-                controller: controller.serverKeyController.value,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Server Key',
+            : Padding(
+                padding: const EdgeInsets.only(left: 50, right: 50),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Server Key*', style: AppText.textBold.copyWith(fontSize: titleFontSize)),
+                    const SizedBox(height: 10),
+                    TextField(
+                      maxLines: 2,
+                      controller: controller.serverKeyController.value,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: 'Server Key',
+                      ),
+                    ),
+                    const SizedBox(height: heightSize),
+                    Text('FCM Registration Token (Device Token)*', style: AppText.textBold.copyWith(fontSize: titleFontSize)),
+                    const SizedBox(height: 10),
+                    TextField(
+                      controller: controller.fcmController.value,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: 'FCM Registration Token (Device Token)',
+                      ),
+                    ),
+                    const SizedBox(height: heightSize),
+                    Text('Title*', style: AppText.textBold.copyWith(fontSize: titleFontSize)),
+                    const SizedBox(height: 10),
+                    TextField(
+                      controller: controller.titleController.value,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: 'Title',
+                      ),
+                    ),
+                    const SizedBox(height: heightSize),
+                    Text('Body*', style: AppText.textBold.copyWith(fontSize: titleFontSize)),
+                    const SizedBox(height: 10),
+                    TextField(
+                      controller: controller.bodyController.value,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: 'Body',
+                      ),
+                    ),
+                    const SizedBox(height: heightSize),
+                    Text('Data - (optional)', style: AppText.textBold.copyWith(fontSize: titleFontSize)),
+                    const SizedBox(height: 10),
+                    TextField(
+                      controller: controller.dataController.value,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: 'Must be JSON Object like {"key":"value"}',
+                      ),
+                    ),
+                    const SizedBox(height: 50),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (controller.serverKeyController.value.text.isEmpty) {
+                          showSnackBar(Get.context!, 'Please enter server key');
+                        } else if (controller.fcmController.value.text.isEmpty) {
+                          showSnackBar(Get.context!, 'Please enter FCM Registration Token');
+                        } else if (controller.titleController.value.text.isEmpty) {
+                          showSnackBar(Get.context!, 'Please enter title');
+                        } else if (controller.bodyController.value.text.isEmpty) {
+                          showSnackBar(Get.context!, 'Please enter body');
+                        } else {
+                          controller.callNotificationApi();
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(minimumSize: Size(5500, 50)),
+                      child: const Text('Push Notification'),
+                    )
+                  ],
                 ),
-              ),
-              const SizedBox(height: heightSize),
-              Text('FCM Registration Token (Device Token)*', style: AppText.textBold.copyWith(fontSize: titleFontSize)),
-              const SizedBox(height: 10),
-              TextField(
-                controller: controller.fcmController.value,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'FCM Registration Token (Device Token)',
-                ),
-              ),
-              const SizedBox(height: heightSize),
-              Text('Title*', style: AppText.textBold.copyWith(fontSize: titleFontSize)),
-              const SizedBox(height: 10),
-              TextField(
-                controller: controller.titleController.value,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Title',
-                ),
-              ),
-              const SizedBox(height: heightSize),
-              Text('Body*', style: AppText.textBold.copyWith(fontSize: titleFontSize)),
-              const SizedBox(height: 10),
-              TextField(
-                controller: controller.bodyController.value,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Body',
-                ),
-              ),
-              const SizedBox(height: 50),
-              ElevatedButton(
-                onPressed: () {
-                  if (controller.serverKeyController.value.text.isEmpty) {
-                    showSnackBar(Get.context!, 'Please enter server key');
-                  } else if (controller.fcmController.value.text.isEmpty) {
-                    showSnackBar(Get.context!, 'Please enter FCM Registration Token');
-                  } else if (controller.titleController.value.text.isEmpty) {
-                    showSnackBar(Get.context!, 'Please enter title');
-                  } else if (controller.bodyController.value.text.isEmpty) {
-                    showSnackBar(Get.context!, 'Please enter body');
-                  } else {
-                    controller.callNotificationApi();
-                  }
-                },
-                style: ElevatedButton.styleFrom(minimumSize: Size(5500, 50)),
-                child: const Text('Push Notification'),
-              )
-          ],
-        ),
-            )));
+              )));
   }
 }

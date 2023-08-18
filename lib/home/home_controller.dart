@@ -13,8 +13,8 @@ class HomeController extends GetxController {
   final fcmController = TextEditingController().obs;
   final titleController = TextEditingController().obs;
   final bodyController = TextEditingController().obs;
+  final dataController = TextEditingController().obs;
   PushNotificationModel pushNotificationModel = PushNotificationModel();
-
 
   @override
   void onInit() {
@@ -23,36 +23,43 @@ class HomeController extends GetxController {
     print("object fcmController===>${fcmController.value.text}");
   }
 
-
   callNotificationApi() {
     checkConnectivity().then((value) {
       if (value) {
-
+        // print('data--> ${jsonDecode(dataController.value.text)}');
 
         Map<String, dynamic> toJson() => {
-          "body":bodyController.value.text,
-          "title":titleController.value.text,
-        };
-
-        var params = <String, dynamic>{
-          "to": fcmController.value.text,
-          "notification": toJson()
-        };
+              "body": bodyController.value.text,
+              "title": titleController.value.text,
+            };
+        var params;
+        dataController.value.text.isNotEmpty
+            ? params = <String, dynamic>{
+                "to": fcmController.value.text,
+                "notification": toJson(),
+                "data": jsonDecode(dataController.value.text)
+              }
+            : params = <String, dynamic>{
+                "to": fcmController.value.text,
+                "notification": toJson(),
+              };
 
         print('param--> $params');
 
-
         ApiService.callPostApi(
-            ApiService.sendNotification, params, null,serverKeyController.value.text)
+                // ApiService.sendNotification, params, null,"AAAAleF3S88:APA91bFkUUCwQfi_PRXb8J0wY34HY4yZRfZwXbylfnmZqD9CcXS3-oxK57bnoxpkEl_32GO0mPtvMwV588aZRA7jN9tpu6sFB4TmhN8dVieHXuQrlrOyT8UnV_QSYLZOfU5cfNAxaB-l")
+                ApiService.sendNotification,
+                params,
+                null,
+                serverKeyController.value.text)
             .then((response) {
-
           CommonResponse commonResponse = CommonResponse.fromJson(response!);
           print('response--> ${response}');
 
           if (commonResponse.success.toString() == '1') {
             showSnackBar(Get.context!, 'Notification sent successfully');
             refresh();
-          } else if(commonResponse.success.toString() == '0') {
+          } else if (commonResponse.success.toString() == '0') {
             showSnackBar(Get.context!, commonResponse.results![0].messageId.toString());
             refresh();
           }
@@ -60,7 +67,6 @@ class HomeController extends GetxController {
       }
     });
   }
-
 
   @override
   void refresh() {
